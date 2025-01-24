@@ -1,20 +1,23 @@
 package machine
 
+import machine.model.CoffeeMachine
 import machine.model.ExitException
 
 // PROMPT ACTIONS
-fun promptAction(machineSupplyStatus: MutableMap<String, Int>) {
+/**
+ *  function prompting user for input: buy, fill, take, remaining, exit
+ *  @param coffeeMachine data class housing coffee machine supply status
+ *  @throws ExitException caught & handled when safely exiting the program
+ *  @throws Exception caught & handled when receiving invalid inputs
+ */
+fun promptAction(coffeeMachine: CoffeeMachine) {
     println(ACTION_PROMPT)
-    printMachineSupplyStatus(
-        when (readln().lowercase()) {
-            REMAINING -> machineSupplyStatus
-            BUY -> buyCoffee(machineSupplyStatus)
-            FILL -> updateMachineSupply(machineSupplyStatus)
-            TAKE -> takeMachineMoney(machineSupplyStatus)
-            EXIT -> throw ExitException()
-            else -> throw Exception()
-        }.apply { println() }
-    )
+    when (readln().lowercase()) {
+        // TODO - update buy, fill, take actions & functions
+        REMAINING -> coffeeMachine.printStatus()
+        EXIT -> throw ExitException()
+        else -> throw Exception()
+    }.apply { println() }
 }
 
 // PRINT MACHINE STATUS

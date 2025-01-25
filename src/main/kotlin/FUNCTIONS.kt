@@ -12,23 +12,24 @@ import machine.model.ExitException
  */
 fun promptAction(coffeeMachine: CoffeeMachine) {
     println(ACTION_PROMPT)
-    when (readln().lowercase()) {
+    val input = readln().lowercase().apply { println() }
+    when (input) {
         REMAINING -> coffeeMachine.printStatus()
         TAKE -> coffeeMachine.takeMoney()
-        // TODO - fill - easy
+        FILL -> coffeeMachine.fillResources()
         // TODO - buy - multi-steps
+        BUY -> {  }
         EXIT -> throw ExitException()
         else -> throw Exception()
     }.apply { println() }
 }
 
-// PRINT MACHINE STATUS
-fun printMachineSupplyStatus(machineSupplyStatus: MutableMap<String, Int>) {
-    println(MACHINE_STATUS)
-    machineSupplyStatus.forEach { (key, value) ->
-        println(key.replace(ASTERISK, value.toString()))
-    }.apply { println() }
-}
+// PRINT EXCEPTION MESSAGE ERROR
+/**
+ *  function to print an Exception's message to screen
+ *  @param e any exception inheriting from the Exception class
+ */
+fun printExceptionMessage(e: Exception) = println("\nInvalid entry - ${e.message}\n")
 
 // BUY ACTION - BUY COFFEE
 fun buyCoffee(machineSupplyStatus: MutableMap<String, Int>): MutableMap<String, Int> {
@@ -79,33 +80,5 @@ fun makeCappuccino(machineSupplyStatus: MutableMap<String, Int>): MutableMap<Str
             MACHINE_MONEY -> machineSupplyStatus[it] = machineSupplyStatus[it]!! + CAPPUCCINO_MONEY_COST
         }
     }
-    return machineSupplyStatus
-}
-
-// FILL ACTION - UPDATE MACHINE SUPPLY
-fun updateMachineSupply(machineSupplyStatus: MutableMap<String, Int>): MutableMap<String, Int> {
-    val prompts = listOf(ADD_WATER, ADD_MILK, ADD_BEANS, ADD_CUPS)
-    prompts.forEach {
-        when (it) {
-            ADD_WATER -> machineSupplyStatus[MACHINE_WATER] = machineSupplyStatus[MACHINE_WATER]!! + promptInput(it)
-            ADD_MILK -> machineSupplyStatus[MACHINE_MILK] = machineSupplyStatus[MACHINE_MILK]!! + promptInput(it)
-            ADD_BEANS -> machineSupplyStatus[MACHINE_BEANS] = machineSupplyStatus[MACHINE_BEANS]!! + promptInput(it)
-            ADD_CUPS  -> machineSupplyStatus[MACHINE_CUPS] = machineSupplyStatus[MACHINE_CUPS]!! + promptInput(it)
-        }
-    }.apply { println() }
-    return machineSupplyStatus
-}
-
-// PROMPT USER INPUT
-fun promptInput(prompt: String): Int {
-    println(prompt)
-    return readln().toInt()
-}
-
-// TAKE ACTION - TAKE MONEY FROM MACHINE
-fun takeMachineMoney(machineSupplyStatus: MutableMap<String, Int>): MutableMap<String, Int> {
-    val moneyTaken = machineSupplyStatus[MACHINE_MONEY]
-    println(ACTION_TAKE.replace(ASTERISK, moneyTaken.toString())).apply { println() }
-    machineSupplyStatus[MACHINE_MONEY] = ZERO
     return machineSupplyStatus
 }

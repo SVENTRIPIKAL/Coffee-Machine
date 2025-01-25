@@ -13,8 +13,10 @@ import machine.model.ExitException
 fun promptAction(coffeeMachine: CoffeeMachine) {
     println(ACTION_PROMPT)
     when (readln().lowercase()) {
-        // TODO - update buy, fill, take actions & functions
         REMAINING -> coffeeMachine.printStatus()
+        TAKE -> coffeeMachine.takeMoney()
+        // TODO - fill - easy
+        // TODO - buy - multi-steps
         EXIT -> throw ExitException()
         else -> throw Exception()
     }.apply { println() }

@@ -19,15 +19,24 @@ const val MACHINE_CUPS = "* disposable cups"
 const val MACHINE_CUPS_DEFAULT = 9
 const val MACHINE_MONEY = "$* of money"
 const val MACHINE_MONEY_DEFAULT = 550
+const val INSUFFICIENT_RESOURCES = "\nSorry, not enough *!"
+const val SUFFICIENT_RESOURCES = "\nI have enough resources, making you a coffee!"
+const val INVALID_ENTRY = "\nInvalid entry - "
 
 // ACTIONS
 const val BUY = "buy"
 const val FILL = "fill"
 const val TAKE = "take"
 const val EXIT = "exit"
+const val BACK = "back"
+const val CUPS = "cups"
+const val WATER = "water"
+const val MILK = "milk"
+const val BEANS = "beans"
+const val MONEY = "money"
 const val REMAINING = "remaining"
 const val ACTION_PROMPT = "Write action ($BUY, $FILL, $TAKE, $REMAINING, $EXIT):"
-const val ACTION_BUY = "What do you want to buy? $ONE - espresso, $TWO - latte, $THREE - cappuccino:"
+const val ACTION_BUY = "What do you want to buy? $ONE - espresso, $TWO - latte, $THREE - cappuccino, $BACK - main menu:"
 const val ACTION_TAKE = "I gave you $*"
 
 // ESPRESSO - BUY COSTS

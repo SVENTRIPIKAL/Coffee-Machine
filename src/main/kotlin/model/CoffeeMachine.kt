@@ -50,10 +50,7 @@ data class CoffeeMachine(
     fun fillResources() {
         listOf(water, milk, beans, cups).forEach { resource ->
             when (resource) {
-                water,
-                milk,
-                beans,
-                cups -> {
+                water, milk, beans, cups -> {
                     while (true) {  // loop until valid entry entered
                         try {
                             println(resource.last())                    // prompt input
@@ -72,8 +69,152 @@ data class CoffeeMachine(
     }
 
     /**
+     *  prompts user for input (1 - espresso, 2 - latte, 3 - cappuccino, back - main menu)
+     *  & loops until a valid input in entered
+     *  @throws Exception when invalid input is entered
+     *  @throws ExitException to exit while loop
+     *  @throws InsufficientResourceException not enough resources for chosen coffee
+     */
+    fun buyCoffee() {
+        while (true) {
+            try {
+                println(ACTION_BUY)
+                when (val input = readln().lowercase()) {   // loop until valid entry
+                    "$ONE", "$TWO", "$THREE" -> makeCoffee(input)
+                    BACK -> throw ExitException()
+                    else -> throw Exception()
+                }
+            } catch (e: Exception) {
+                when (e) {
+                    is ExitException -> break
+                    is InsufficientResourceException -> {
+                        println(INSUFFICIENT_RESOURCES.replace(ASTERISK, e.localizedMessage))
+                        break
+                    }
+                    else -> printExceptionMessage(e)
+                }
+            }
+        }
+    }
+
+    /**
      *  prints resource string & replaces Asterisk with current resource value
      *  @param resource list of strings related to provided resource
      */
     private fun printResource(resource: List<String>) = println(resource.first().replace(ASTERISK, resource[ONE]))
+
+    /**
+     *  creates map of coffee resources & costs, checks if coffee machine
+     *  has enough resources to make the chosen coffee (throws an
+     *  InsufficientResourceException if not), then decreases coffee machine
+     *  resources according to chosen coffee resource cost
+     *  @param chosenCoffee the chosen coffee (1 - espresso, 2 - latte, 3 - cappuccino)
+     *  @throws ExitException exits while loop after coffee is made
+     *  @throws InsufficientResourceException not enough resources for chosen coffee
+     */
+    private fun makeCoffee(chosenCoffee: String) {
+        // create resource map for chosen coffee
+        val coffeeMap = when (chosenCoffee) {
+            "$ONE" -> mapOf(
+                CUPS to ONE,
+                WATER to ESPRESSO_WATER_COST,
+                BEANS to ESPRESSO_BEANS_COST,
+                MONEY to ESPRESSO_MONEY_COST
+            )
+            "$TWO" -> mapOf(
+                CUPS to ONE,
+                WATER to LATTE_WATER_COST,
+                MILK to LATTE_MILK_COST,
+                BEANS to LATTE_BEANS_COST,
+                MONEY to LATTE_MONEY_COST
+            )
+            else -> mapOf(
+                CUPS to ONE,
+                WATER to CAPPUCCINO_WATER_COST,
+                MILK to CAPPUCCINO_MILK_COST,
+                BEANS to CAPPUCCINO_BEANS_COST,
+                MONEY to CAPPUCCINO_MONEY_COST
+            )
+        }
+
+        // check to see if enough resources available else throw InsufficientResourceException
+        sufficientResourceCheck(coffeeMap)
+
+        // print 'making coffee' to screen
+        println(SUFFICIENT_RESOURCES)
+
+        // decrease/increase coffee machine resources according to chosen coffee cost
+        coffeeMap.forEach { (resource, cost) ->
+            when (resource) {
+                CUPS -> decreaseCupsTotal(cost)
+                WATER -> decreaseWaterTotal(cost)
+                MILK -> decreaseMilkTotal(cost)
+                BEANS -> decreaseBeansTotal(cost)
+                MONEY -> increaseMoneyTotal(cost)
+            }
+        }
+
+        // exit while loop
+        throw ExitException()
+    }
+
+    /**
+     *  checks coffee machine resource totals & throws
+     *  InsufficientResourceException if totals are lower than cost
+     *  @param coffeeMap map of chosen coffee resources & costs
+     *  @throws InsufficientResourceException not enough resources for chosen coffee
+     */
+    private fun sufficientResourceCheck(coffeeMap: Map<String, Int>) {
+        coffeeMap.forEach { (resource, cost) ->
+            val enoughSupply = when (resource) {
+                WATER -> water[ONE].toInt() >= cost
+                MILK -> milk[ONE].toInt() >= cost
+                BEANS -> beans[ONE].toInt() >= cost
+                CUPS -> cups[ONE].toInt() >= cost
+                MONEY -> true
+                else -> false
+            }
+            if (!enoughSupply) throw InsufficientResourceException(resource)
+        }
+    }
+
+    /**
+     *  decreases coffee machine cup total by 1
+     *  @param cupsCost cups needed to make coffee
+     */
+    private fun decreaseCupsTotal(cupsCost: Int) {
+        cups[ONE] = "${cups[ONE].toInt() - cupsCost}"
+    }
+
+    /**
+     *  decreases coffee machine water total by provided water cost
+     *  @param waterCost water needed to make coffee
+     */
+    private fun decreaseWaterTotal(waterCost: Int) {
+        water[ONE] = "${water[ONE].toInt() - waterCost}"
+    }
+
+    /**
+     *  decreases coffee machine milk total by provided milk cost
+     *  @param milkCost milk needed to make coffee
+     */
+    private fun decreaseMilkTotal(milkCost: Int) {
+        milk[ONE] = "${milk[ONE].toInt() - milkCost}"
+    }
+
+    /**
+     *  decreases coffee machine beans total by provided beans cost
+     *  @param beansCost beans needed to make coffee
+     */
+    private fun decreaseBeansTotal(beansCost: Int) {
+        beans[ONE] = "${beans[ONE].toInt() - beansCost}"
+    }
+
+    /**
+     *  increases coffee machine money total by provided coffee cost
+     *  @param coffeeCost the price of the chosen coffee
+     */
+    private fun increaseMoneyTotal(coffeeCost: Int) {
+        money[ONE] = "${money[ONE].toInt() + coffeeCost}"
+    }
 }

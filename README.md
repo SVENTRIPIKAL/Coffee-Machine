@@ -9,11 +9,12 @@ the user if resources are lacking when selecting their coffee type.
 * Loops
 * Constants
 * Data Class
-* Member Functions
 * When Expressions
+* Member Functions
 * Exception Handling
 * Object-Oriented Programming
 * Inheritance, Encapsulation, Abstraction
 
 ### Inspiration
-Part of the [Jetbrains Academy: Hyperskill - Kotlin Developer](https://hyperskill.org/courses/3-kotlin-developer) Course
+[Coffee Machine](https://hyperskill.org/projects/67) (Kotlin) \
+_Part of the [Jetbrains Academy: Hyperskill - Kotlin Developer](https://hyperskill.org/courses/3-kotlin-developer) Course_
